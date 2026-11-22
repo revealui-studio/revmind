@@ -1,7 +1,7 @@
 name: backflow-main-into-test
 
 # Thin caller — delegates to the org-shared reusable backflow workflow:
-#   RevealUIStudio/.github/.github/workflows/backflow-reusable.yml
+#   revealui-studio/.github/.github/workflows/backflow-reusable.yml
 # Requires the BACKFLOW_APP_ID / BACKFLOW_APP_PRIVATE_KEY secrets + the
 # backflow App installed on this repo (Contents + Pull requests r/w).
 # Triggers on push to BOTH main and test, and on PRs targeting test:
@@ -12,7 +12,8 @@ name: backflow-main-into-test
 #     already contains main.
 #   - pull_request:test — job `backflow-current` fails other PRs while
 #     origin/test does not contain origin/main (required check name:
-#     `backflow / backflow-current`). The backflow PR itself is allowed.
+#     `backflow / backflow-current`). The in-repo Backflow App PR is allowed
+#     when backflow_bot_login matches its author.
 on:
   push:
     branches: [main, test]
@@ -29,7 +30,9 @@ jobs:
   backflow:
     # Pinned to a SHA — org-shared reusable was referenced by the mutable @main.
     # Bump this deliberately when the reusable changes.
-    uses: RevealUIStudio/.github/.github/workflows/backflow-reusable.yml@e06523d63054c2c133b8df69b50b55724a8364f6 # feat/backflow-current-gate (org .github#15) — block other test merges while test is behind main
+    uses: revealui-studio/.github/.github/workflows/backflow-reusable.yml@fe3a16f3f8070b634afaad387db3317db244a6de # org .github#2, in-repo App bot exemption
+    with:
+      backflow_bot_login: "revealfleet-backflow[bot]"
     # Scope to ONLY the two secrets the reusable declares (its workflow_call.secrets
     # block documents this exact form) instead of `secrets: inherit`, which would
     # forward every caller secret (VERCEL_TOKEN, PROD_POSTGRES_URL, …) into it.
